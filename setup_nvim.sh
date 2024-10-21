@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# List of URLs to clone
+# Plugins
 urls=(
     "https://github.com/nvim-treesitter/nvim-treesitter"
     "https://github.com/neovim/nvim-lspconfig"
