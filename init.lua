@@ -41,11 +41,11 @@ vim.cmd [[
 ]]
 
 
+vim.cmd("filetype plugin on")
 g.netrw_banner = 0                  -- disable banner
-g.newrw_winsize = 10                -- explore is 25% of screen
 g.netrw_altv = 1                    -- open splits to right
-g.netrw_liststyle=3                 -- tree view
--- g.netrw_use_errorwindow = 0         -- popup window (2) doesn't work in nvim, use echoerr instead
+g.netrw_liststyle = 3               -- tree view
+g.netrw_use_errorwindow = 0         -- popup window
 g.netrw_sizestyle = "H"
 g.netrw_list_hide = fn['netrw_gitignore#Hide']() .. [[,.git/]]
 g.netrw_sort_sequence = [[[\/]$,*]] -- sort directories first
@@ -55,7 +55,7 @@ g.netrw_keepdir = 1                 -- keep main directory
 -- Lua function to try :Rexplore and fallback to :Explore
 function ToggleNetrw()
   local success = pcall(vim.cmd, "Rexplore")
-  if not success then
+  if not success or not (vim.api.nvim_buf_get_option(0, "filetype")=="netrw") then
     vim.cmd("Explore")
   end
 end
@@ -65,8 +65,9 @@ map('n', '<C-j>', '4<C-e>4j')                   -- fast scrolling
 map('n', '<C-k>', '4<C-y>4k')                   -- fast scrolling
 map('n', '<leader>o', 'o<Esc>')                 -- insert newline from normal mode
 map('n', '<leader>O', 'O<Esc>')                 -- insert newline from normal mode
-map('n', '<leader>e', '<cmd>Lexplore<CR>')      -- show file explorer
 map('n', '<leader>e', ':lua ToggleNetrw()<CR>', -- keep netrw position
+    { silent = true })
+map('n', '<leader>E', '<cmd>Explore<CR>',       -- force new netrw
     { silent = true })
 map('v', '<leader>y', '"+y')                    -- yank into system clipboard
 map('n', '<leader>y', '"+y')                    -- yank into system clipboard
@@ -82,8 +83,10 @@ map("n", "<leader>sh", "<C-w>s")                -- split window horizontally
 map("n", "<leader>se", "<C-w>=")                -- make split windows equal width & height
 map("n", "<leader>sx", ":close<CR>")            -- close current split window
 map("n", "<leader>gt", "<C-]>")                 -- go to tag
-map("n", "<leader>l", "<cmd>cnext<CR>")         -- next quickfix
-map("n", "<leader>h", "<cmd>cprev<CR>")         -- next quickfix
+map("n", "<leader>j", "<cmd>cnext<CR>")         -- next quickfix
+map("n", "<leader>k", "<cmd>cprev<CR>")         -- prev quickfix
+map("n", "<leader>l", "<cmd>cnfile<CR>")        -- next quickfix file
+map("n", "<leader>h", "<cmd>cpfile<CR>")        -- prev quickfix file
 
 -- TreeSitter
 require'nvim-treesitter.configs'.setup {
