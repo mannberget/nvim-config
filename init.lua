@@ -59,10 +59,9 @@ function ToggleNetrw()
     vim.cmd("Explore")
   end
 end
- 
 
-map('n', '<C-j>', '4<C-e>4j')                   -- fast scrolling
-map('n', '<C-k>', '4<C-y>4k')                   -- fast scrolling
+vim.cmd("nnoremap <expr> <C-j> (winheight(0) / 5) . '<C-e>' . (winheight(0) / 5) . 'j'") -- small scroll down
+vim.cmd("nnoremap <expr> <C-k> (winheight(0) / 5) . '<C-y>' . (winheight(0) / 5) . 'k'") -- small scroll down
 map('n', '<leader>o', 'o<Esc>')                 -- insert newline from normal mode
 map('n', '<leader>O', 'O<Esc>')                 -- insert newline from normal mode
 map('n', '<leader>e', ':lua ToggleNetrw()<CR>', -- keep netrw position
@@ -108,14 +107,14 @@ require'nvim-treesitter.configs'.setup {
 
 
 -- LSP
-vim.keymap.set('n', 'gE', vim.diagnostic.goto_prev, { noremap=true, silent=true })
-vim.keymap.set('n', 'ge', vim.diagnostic.goto_next, { noremap=true, silent=true })
-
 vim.api.nvim_create_autocmd('LspAttach', {
   callback = function(args)
     local bufnr = args.buf
     local client = vim.lsp.get_client_by_id(args.data.client_id)
     local bufopts = { noremap=true, silent=true, buffer=bufnr }
+
+    vim.keymap.set('n', 'gE', vim.diagnostic.goto_prev, { noremap=true, silent=true })
+    vim.keymap.set('n', 'ge', vim.diagnostic.goto_next, { noremap=true, silent=true })
 
     if client.server_capabilities.completionProvider then
       vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
@@ -153,8 +152,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
 -- Language Server Integrations:
 require'lspconfig'.gopls.setup{}
-
-
+require'lspconfig'.eslint.setup{}
 
 vim.opt.completeopt = {"menu", "menuone", "noselect"}
 local cmp = require('cmp')
