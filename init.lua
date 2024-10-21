@@ -82,6 +82,8 @@ map("n", "<leader>sh", "<C-w>s")                -- split window horizontally
 map("n", "<leader>se", "<C-w>=")                -- make split windows equal width & height
 map("n", "<leader>sx", ":close<CR>")            -- close current split window
 map("n", "<leader>gt", "<C-]>")                 -- go to tag
+map("n", "<leader>l", "<cmd>cnext<CR>")         -- next quickfix
+map("n", "<leader>h", "<cmd>cprev<CR>")         -- next quickfix
 
 -- TreeSitter
 require'nvim-treesitter.configs'.setup {
