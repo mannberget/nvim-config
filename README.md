@@ -6,5 +6,7 @@ Personal neovim configuration.
 
 ## Plugins:
 (make sure to have executing permissions)
+
 install: `bash install.sh`
+
 setup symlink: `bash link.sh`
