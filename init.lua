@@ -173,6 +173,14 @@ require'lspconfig'.pylsp.setup{
     }
   }
 }
+require'lspconfig'.ccls.setup{
+  init_options = {
+    compilationDatabaseDirectory = "build";
+    index = {
+      threads = 0;
+    };
+  }
+}
 
 
 vim.opt.completeopt = {"menu", "menuone", "noselect"}
