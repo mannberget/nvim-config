@@ -1,6 +1,12 @@
 # nvim-config
 Personal neovim configuration.
 
-Requirement: Neovim installed on your (UNIX) system.
+## Requirement:
+- Neovim installed on your (UNIX) system.
 
-To install: `chmod +x setup_nvim.sh && bash setup_nvim.sh`
+## Plugins:
+(make sure to have executing permissions)
+
+install: `bash install.sh`
+
+setup symlink: `bash link.sh`
