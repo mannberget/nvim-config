@@ -39,6 +39,7 @@ vim.cmd [[
   highlight NonText guibg=none
   highlight Normal ctermbg=none
   highlight NonText ctermbg=none
+  highlight link markdownError NONE
 ]]
 
 -- restore position in file
@@ -75,7 +76,7 @@ map('n', '<leader>E', '<cmd>Explore<CR>',       -- force new netrw
 map('v', '<leader>y', '"+y')                    -- yank into system clipboard
 map('n', '<leader>y', '"+y')                    -- yank into system clipboard
 map('v', '<leader>p', '"_dP')                   -- paste without overwrite register
-map('n', '<leader>c', 'gcc',                    -- comment line
+map('n', '<leader>cc', 'gcc',                   -- comment line
     { noremap = false })
 map('v', '<leader>c', 'gc',                     -- comment selection
     { noremap = false })
@@ -178,46 +179,49 @@ vim.opt.completeopt = {"menu", "menuone", "noselect"}
 local cmp = require('cmp')
 local cmp_types = require('cmp.types')
 local source_mapping = {buffer = '[Buffer]', nvim_lsp = '[LSP]'}
-
 cmp.setup({
-    mapping = cmp.mapping.preset.insert({
-        ['<Tab>'] = cmp.mapping(function(fallback)
-          if cmp.visible() then
-            cmp.select_next_item()
-          else
-            fallback()
-          end
-        end, { 'i', 's' }),
-        ['<S-Tab>'] = cmp.mapping(function(fallback)
-          if cmp.visible() then
-            cmp.select_prev_item()
-          else
-            fallback()
-          end
-        end, { 'i', 's' }),
-        ['<C-f>'] = cmp.mapping.scroll_docs( 4),
-        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-Space>'] = cmp.mapping(function(fallback)
-          if cmp.visible() then
-            cmp.abort()
-          else
-            cmp.complete()
-          end
-        end, { 'i', 's' }),
-        ['<CR>'] = cmp.mapping.confirm({ select = false }),
-    }),
-    sources = cmp.config.sources({
-        { name = 'nvim_lsp' },
-    },
-    {
-        { name = 'path' },
-        { name = 'buffer' },
-    }),
-    completion = {keyword_length = 2},
-    formatting = {
-        format = function(entry, vim_item)
-            vim_item.menu = source_mapping[entry.source.name]
-            return vim_item
-        end,
-    },
+  mapping = cmp.mapping.preset.insert({
+      ['<Tab>'] = cmp.mapping(function(fallback)
+        if cmp.visible() then
+          cmp.select_next_item()
+        else
+          fallback()
+        end
+      end, { 'i', 's' }),
+      ['<S-Tab>'] = cmp.mapping(function(fallback)
+        if cmp.visible() then
+          cmp.select_prev_item()
+        else
+          fallback()
+        end
+      end, { 'i', 's' }),
+      ['<C-f>'] = cmp.mapping.scroll_docs( 4),
+      ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-Space>'] = cmp.mapping(function(fallback)
+        if cmp.visible() then
+          cmp.abort()
+        else
+          cmp.complete()
+        end
+      end, { 'i', 's' }),
+      ['<CR>'] = cmp.mapping.confirm({ select = false }),
+  }),
+  sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      { name = 'nvim_lsp_signature_help' },
+  },
+  {
+      { name = 'path' },
+      { name = 'buffer' },
+  }),
+  completion = {keyword_length = 2},
+  formatting = {
+      format = function(entry, vim_item)
+          vim_item.menu = source_mapping[entry.source.name]
+          return vim_item
+      end,
+  },
+  experimental = {
+    ghost_text = true,
+  },
 })

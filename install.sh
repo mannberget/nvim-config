@@ -7,6 +7,7 @@ urls=(
     "https://github.com/hrsh7th/nvim-cmp"
     "https://github.com/hrsh7th/cmp-nvim-lsp"
     "https://github.com/hrsh7th/cmp-path"
+    "https://github.com/hrsh7th/cmp-nvim-lsp-signature-help"
 )
 
 # Define the target directory for cloning
