@@ -29,6 +29,7 @@ opt.wrap = false
 opt.encoding = "utf-8"
 opt.cmdheight = 2
 opt.wildmenu = true
+opt.undofile = true
 g.mapleader = " "
 
 opt.path:append({'.', '**'})
@@ -40,6 +41,10 @@ vim.cmd [[
   highlight NonText ctermbg=none
 ]]
 
+-- restore position in file
+vim.cmd [[
+  autocmd BufReadPost * if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+]]
 
 vim.cmd("filetype plugin on")
 g.netrw_banner = 0                  -- disable banner
@@ -50,7 +55,6 @@ g.netrw_sizestyle = "H"
 g.netrw_list_hide = fn['netrw_gitignore#Hide']() .. [[,.git/]]
 g.netrw_sort_sequence = [[[\/]$,*]] -- sort directories first
 g.netrw_keepdir = 1                 -- keep main directory
-
 
 -- Lua function to try :Rexplore and fallback to :Explore
 function ToggleNetrw()
@@ -153,6 +157,22 @@ vim.api.nvim_create_autocmd('LspAttach', {
 -- Language Server Integrations:
 require'lspconfig'.gopls.setup{}
 require'lspconfig'.eslint.setup{}
+require'lspconfig'.pylsp.setup{
+  settings = {
+    configurationSources = {"flake8"},
+    pylsp = {
+      plugins = {
+        black = { enabled = false },
+        pycodestyle = { enabled = false },
+        pyflakes = { enabled = false },
+        mccabe = { enabled = false },
+        flake8 = { enabled = true },
+        autopep8 = { enabled = true },
+      }
+    }
+  }
+}
+
 
 vim.opt.completeopt = {"menu", "menuone", "noselect"}
 local cmp = require('cmp')
