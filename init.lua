@@ -91,6 +91,10 @@ map("n", "<leader>j", "<cmd>cnext<CR>")         -- next quickfix
 map("n", "<leader>k", "<cmd>cprev<CR>")         -- prev quickfix
 map("n", "<leader>l", "<cmd>cnfile<CR>")        -- next quickfix file
 map("n", "<leader>h", "<cmd>cpfile<CR>")        -- prev quickfix file
+map("v", "<Tab>", ">gv")                        -- indent selection
+map("v", "<S-Tab>", "<gv")                      -- unindent selection
+map("n", "H", "^")                              -- go to beginning of line
+map("n", "L", "$")                              -- go to end of line
 
 -- TreeSitter
 require'nvim-treesitter.configs'.setup {
@@ -189,14 +193,14 @@ local cmp_types = require('cmp.types')
 local source_mapping = {buffer = '[Buffer]', nvim_lsp = '[LSP]'}
 cmp.setup({
   mapping = cmp.mapping.preset.insert({
-      ['<Tab>'] = cmp.mapping(function(fallback)
+      ['<C-n>'] = cmp.mapping(function(fallback)
         if cmp.visible() then
           cmp.select_next_item()
         else
           fallback()
         end
       end, { 'i', 's' }),
-      ['<S-Tab>'] = cmp.mapping(function(fallback)
+      ['<C-p>'] = cmp.mapping(function(fallback)
         if cmp.visible() then
           cmp.select_prev_item()
         else
