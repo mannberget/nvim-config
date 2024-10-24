@@ -47,32 +47,16 @@ vim.cmd [[
   autocmd BufReadPost * if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 ]]
 
-vim.cmd("filetype plugin on")
-g.netrw_banner = 0                  -- disable banner
-g.netrw_altv = 1                    -- open splits to right
-g.netrw_liststyle = 3               -- tree view
-g.netrw_use_errorwindow = 0         -- popup window
-g.netrw_sizestyle = "H"
-g.netrw_list_hide = fn['netrw_gitignore#Hide']() .. [[,.git/]]
-g.netrw_sort_sequence = [[[\/]$,*]] -- sort directories first
-g.netrw_keepdir = 1                 -- keep main directory
-
--- Lua function to try :Rexplore and fallback to :Explore
-function ToggleNetrw()
-  local success = pcall(vim.cmd, "Rexplore")
-  if not success or not (vim.api.nvim_buf_get_option(0, "filetype")=="netrw") then
-    vim.cmd("Explore")
-  end
-end
+-- Disable netrw
+g.loaded_netrw = 1
+g.loaded_netrwPlugin = 1
 
 vim.cmd("nnoremap <expr> <C-j> (winheight(0) / 5) . '<C-e>' . (winheight(0) / 5) . 'j'") -- small scroll down
 vim.cmd("nnoremap <expr> <C-k> (winheight(0) / 5) . '<C-y>' . (winheight(0) / 5) . 'k'") -- small scroll down
 map('n', '<leader>o', 'o<Esc>')                 -- insert newline from normal mode
 map('n', '<leader>O', 'O<Esc>')                 -- insert newline from normal mode
-map('n', '<leader>e', ':lua ToggleNetrw()<CR>', -- keep netrw position
-    { silent = true })
-map('n', '<leader>E', '<cmd>Explore<CR>',       -- force new netrw
-    { silent = true })
+map("n", "<leader>e", "<CMD>Oil<CR>",           -- open oil
+    { desc = "Open oil" })
 map('v', '<leader>y', '"+y')                    -- yank into system clipboard
 map('n', '<leader>y', '"+y')                    -- yank into system clipboard
 map('v', '<leader>p', '"_dP')                   -- paste without overwrite register
@@ -80,8 +64,12 @@ map('n', '<leader>cc', 'gcc',                   -- comment line
     { noremap = false })
 map('v', '<leader>c', 'gc',                     -- comment selection
     { noremap = false })
-map("n", "<leader>ff", ":find *")               -- find files
-map("n", "<leader>b", ":b ")                    -- find buffers
+map("n", "<leader>ff",                          -- find files
+  ":lua require'telescope.builtin'.find_files()<CR>",
+  { silent = true })
+map("n", "<leader>fb",                          -- find buffers
+  ":lua require'telescope.builtin'.buffers()<CR>",
+  { silent = true })
 map("n", "<leader>sv", "<C-w>v")                -- split window vertically
 map("n", "<leader>sh", "<C-w>s")                -- split window horizontally
 map("n", "<leader>se", "<C-w>=")                -- make split windows equal width & height
@@ -96,8 +84,24 @@ map("v", "<S-Tab>", "<gv")                      -- unindent selection
 map("n", "H", "^")                              -- go to beginning of line
 map("n", "L", "$")                              -- go to end of line
 
+-- Telescope
+require('telescope').setup{
+  defaults = {
+    mappings = {
+      i = {
+        ["<esc>"] = require('telescope.actions').close,
+        ["<C-j>"] = require('telescope.actions').move_selection_next,
+        ["<C-k>"] = require('telescope.actions').move_selection_previous,
+        ["<C-s>"] = require('telescope.actions').toggle_selection,
+        ["<C-u>"] = require('telescope.actions').preview_scrolling_up,
+        ["<C-d>"] = require('telescope.actions').preview_scrolling_down,
+      }
+    }
+  },
+}
+
 -- TreeSitter
-require'nvim-treesitter.configs'.setup {
+require('nvim-treesitter.configs').setup {
   ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "go", "javascript" },
   sync_install = false,
   auto_install = false,
@@ -114,6 +118,7 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 
+require('oil').setup()
 
 -- LSP
 vim.api.nvim_create_autocmd('LspAttach', {
@@ -160,9 +165,10 @@ vim.api.nvim_create_autocmd('LspAttach', {
 })
 
 -- Language Server Integrations:
-require'lspconfig'.gopls.setup{}
-require'lspconfig'.eslint.setup{}
-require'lspconfig'.pylsp.setup{
+lspconfig = require('lspconfig')
+lspconfig.gopls.setup{}
+lspconfig.eslint.setup{}
+lspconfig.pylsp.setup{
   settings = {
     configurationSources = {"flake8"},
     pylsp = {
@@ -177,7 +183,7 @@ require'lspconfig'.pylsp.setup{
     }
   }
 }
-require'lspconfig'.ccls.setup{
+lspconfig.ccls.setup{
   init_options = {
     compilationDatabaseDirectory = "build";
     index = {
