@@ -35,13 +35,13 @@ function state.mode()
   return string.format("   %s ", mode_name):upper()
 end
 
-function state.git_branch()
-  local branch = vim.fn.system("git rev-parse --abbrev-ref HEAD 2>/dev/null")
-  if branch == "" then
-    return ""
-  end
-  return string.format(" (%s) ", branch:gsub("%s+", ""))  -- Trim whitespace
-end
+-- function state.git_branch()
+--   local branch = vim.fn.system("git rev-parse --abbrev-ref HEAD 2>/dev/null")
+--   if branch == "" then
+--     return ""
+--   end
+--   return string.format(" (%s) ", branch:gsub("%s+", ""))  -- Trim whitespace
+-- end
 
 -- Function to get file path
 function state.filepath()
@@ -108,7 +108,7 @@ end
 state.full_status = {
   '%{%v:lua._statusline_component("mode")%} ',
   '%#Normal#',
-  '%{%v:lua._statusline_component("git_branch")%} ',
+  -- '%{%v:lua._statusline_component("git_branch")%} ',
   '%{%v:lua._statusline_component("filepath")%}',
   '%{%v:lua._statusline_component("filename")%}',
   '%=',
@@ -155,7 +155,6 @@ function M.setup()
     end
   })
 
-  -- Setting up the statusline for inactive windows
   autocmd('WinLeave', {
     group = augroup,
     callback = function()
