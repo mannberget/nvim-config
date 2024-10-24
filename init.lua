@@ -9,7 +9,7 @@ local function map(mode, lhs, rhs, opts)
   vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
-require('statusline')
+require('statusline').setup{}
 
 opt.compatible = false              -- some vi-compatibility stuff
 opt.timeoutlen = 300
@@ -29,7 +29,7 @@ opt.smartindent = true              -- insert indents automatically
 opt.termguicolors = true            -- true color support
 opt.wrap = false
 opt.encoding = "utf-8"
-opt.cmdheight = 2
+opt.cmdheight = 1
 opt.wildmenu = true
 opt.undofile = true
 g.mapleader = " "

@@ -1,12 +1,19 @@
-local modes = {
+local M = {}
+local state = {}
+
+function _G._statusline_component(name)
+  return state[name]()
+end
+
+local mode_map = {
   ["n"] = "NORMAL",
   ["no"] = "NORMAL",
   ["v"] = "VISUAL",
   ["V"] = "VISUAL LINE",
-  [""] = "VISUAL BLOCK",
+  ["\22"] = "VISUAL BLOCK",  -- "\22" represents Ctrl-V
   ["s"] = "SELECT",
   ["S"] = "SELECT LINE",
-  [""] = "SELECT BLOCK",
+  ["\19"] = "SELECT BLOCK",  -- "\19" represents Ctrl-S
   ["i"] = "INSERT",
   ["ic"] = "INSERT",
   ["R"] = "REPLACE",
@@ -21,29 +28,41 @@ local modes = {
   ["t"] = "TERMINAL",
 }
 
-local function mode()
+-- Mode function based on mode_map
+function state.mode()
   local current_mode = vim.api.nvim_get_mode().mode
-  return string.format(" %s ", modes[current_mode]):upper()
+  local mode_name = mode_map[current_mode] or "UNKNOWN"
+  return string.format("   %s ", mode_name):upper()
 end
 
-local function filepath()
-  local fpath = vim.fn.fnamemodify(vim.fn.expand "%", ":~:.:h")
-  if fpath == "" or fpath == "." then
-      return " "
+function state.git_branch()
+  local branch = vim.fn.system("git rev-parse --abbrev-ref HEAD 2>/dev/null")
+  if branch == "" then
+    return ""
   end
+  return string.format(" (%s) ", branch:gsub("%s+", ""))  -- Trim whitespace
+end
 
+-- Function to get file path
+function state.filepath()
+  local fpath = vim.fn.fnamemodify(vim.fn.expand("%"), ":~:.:h")
+  if fpath == "" or fpath == "." then
+    return " "
+  end
   return string.format(" %%<%s/", fpath)
 end
 
-local function filename()
-  local fname = vim.fn.expand "%:t"
+-- Function to get file name
+function state.filename()
+  local fname = vim.fn.expand("%:t")
   if fname == "" then
-      return ""
+    return ""
   end
   return fname .. " "
 end
 
-local function lsp()
+-- LSP diagnostics function
+function state.lsp()
   local count = {}
   local levels = {
     errors = "Error",
@@ -57,53 +76,113 @@ local function lsp()
   local errors = ""
   local warnings = ""
 
+  -- Set the error count with Neovim's DiagnosticError highlight group
   if count["errors"] ~= 0 then
-    errors = "  " .. count["errors"]
+    errors = "%#DiagnosticError#  " .. count["errors"] .. " "
   end
+
+  -- Set the warning count with Neovim's DiagnosticWarn highlight group
   if count["warnings"] ~= 0 then
-    warnings = "  " .. count["warnings"]
+    warnings = "%#DiagnosticWarn#  " .. count["warnings"] .. " "
   end
 
-  return errors .. warnings ..  "%#Normal#"
+  -- Restore to normal highlight after the diagnostics
+  return errors .. warnings .. '%#Normal#'
 end
 
-local function filetype()
-  return string.format(" %s ", vim.bo.filetype):upper()
+-- Filetype function
+function state.filetype()
+  return string.format("  %s  ", vim.bo.filetype)
 end
 
-local function lineinfo()
+-- Line information function
+function state.lineinfo()
   if vim.bo.filetype == "alpha" then
     return ""
   end
-  return " %P %l:%c "
+  -- return " %P %l:%c "
+  return " %l "
 end
 
-Statusline = {}
+-- Status line format
+state.full_status = {
+  '%{%v:lua._statusline_component("mode")%} ',
+  '%#Normal#',
+  '%{%v:lua._statusline_component("git_branch")%} ',
+  '%{%v:lua._statusline_component("filepath")%}',
+  '%{%v:lua._statusline_component("filename")%}',
+  '%=',
+  '%{%v:lua._statusline_component("lsp")%}',
+  '%{%v:lua._statusline_component("filetype")%}',
+  '%{%v:lua._statusline_component("lineinfo")%}',
+}
 
-Statusline.active = function()
-  return table.concat {
-    "%#Statusline#",
-    mode(),
-    "%#Normal# ",
-    filepath(),
-    filename(),
-    lsp(),
-    "%#Normal#",
-    "%=%#StatusLineExtra#",
-    filetype(),
-    lineinfo(),
-  }
+state.short_status = {
+  state.full_status[1], -- mode
+  '%=',                 -- center alignment
+  '%{%v:lua._statusline_component("lineinfo")%}', -- line info
+}
+
+state.inactive_status = {
+  ' %F', -- full file path
+}
+
+-- Setup function for autocommands and to apply statusline
+function M.setup()
+  local augroup = vim.api.nvim_create_augroup('statusline_cmds', { clear = true })
+  local autocmd = vim.api.nvim_create_autocmd
+
+  vim.opt.showmode = false
+
+  -- Setting up the statusline for active windows
+  autocmd('WinEnter', {
+    group = augroup,
+    callback = function()
+      vim.wo.statusline = M.get_status('full')
+    end
+  })
+
+  autocmd('InsertEnter', {
+    group = augroup,
+    desc = 'Clear message area',
+    command = "echo ''"
+  })
+
+  autocmd('BufEnter', {
+    group = augroup,
+    callback = function()
+      vim.wo.statusline = M.get_status('full')
+    end
+  })
+
+  -- Setting up the statusline for inactive windows
+  autocmd('WinLeave', {
+    group = augroup,
+    callback = function()
+      vim.wo.statusline = M.get_status('inactive')
+    end
+  })
+
+  autocmd('BufLeave', {
+    group = augroup,
+    callback = function()
+      vim.wo.statusline = M.get_status('inactive')
+    end
+  })
+
+  autocmd('DiagnosticChanged', {
+    group = augroup,
+    callback = function()
+      vim.wo.statusline = M.get_status('full')
+    end
+  })
+
 end
 
-function Statusline.inactive()
-  return " %F"
+-- Function to retrieve the statusline format
+function M.get_status(name)
+  return table.concat(state[string.format('%s_status', name)], '')
 end
 
-vim.api.nvim_exec([[
-  augroup Statusline
-  au!
-  au WinEnter,BufEnter * setlocal statusline=%!v:lua.Statusline.active()
-  au WinLeave,BufLeave * setlocal statusline=%!v:lua.Statusline.inactive()
-  au WinEnter,BufEnter,FileType NvimTree setlocal statusline=%!v:lua.Statusline.short()
-  augroup END
-]], false)
+return M
+
