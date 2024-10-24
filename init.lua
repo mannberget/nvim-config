@@ -9,6 +9,8 @@ local function map(mode, lhs, rhs, opts)
   vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
+require('statusline')
+
 opt.compatible = false              -- some vi-compatibility stuff
 opt.timeoutlen = 300
 opt.guicursor = ""
