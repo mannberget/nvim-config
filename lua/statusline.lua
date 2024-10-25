@@ -1,5 +1,8 @@
 local M = {}
 local state = {}
+local cache = {}
+cache.branch = ""
+cache.lsp = ""
 
 function _G._statusline_component(name)
   return state[name]()
@@ -35,13 +38,17 @@ function state.mode()
   return string.format("   %s ", mode_name):upper()
 end
 
--- function state.git_branch()
---   local branch = vim.fn.system("git rev-parse --abbrev-ref HEAD 2>/dev/null")
---   if branch == "" then
---     return ""
---   end
---   return string.format(" (%s) ", branch:gsub("%s+", ""))  -- Trim whitespace
--- end
+function M.update_git_branch()
+  return vim.fn.system("git rev-parse --abbrev-ref HEAD 2>/dev/null")
+end
+
+
+function state.git_branch()
+  if cache.branch == "" then
+    return ""
+  end
+  return string.format(" (%s) ", cache.branch:gsub("%s+", ""))  -- Trim whitespace
+end
 
 -- Function to get file path
 function state.filepath()
@@ -61,8 +68,7 @@ function state.filename()
   return fname .. " "
 end
 
--- LSP diagnostics function
-function state.lsp()
+function M.update_lsp()
   local count = {}
   local levels = {
     errors = "Error",
@@ -88,6 +94,12 @@ function state.lsp()
 
   -- Restore to normal highlight after the diagnostics
   return errors .. warnings .. '%#Normal#'
+
+end
+
+-- LSP diagnostics function
+function state.lsp()
+  return cache.lsp
 end
 
 -- Filetype function
@@ -108,7 +120,7 @@ end
 state.full_status = {
   '%{%v:lua._statusline_component("mode")%} ',
   '%#Normal#',
-  -- '%{%v:lua._statusline_component("git_branch")%} ',
+  '%{%v:lua._statusline_component("git_branch")%} ',
   '%{%v:lua._statusline_component("filepath")%}',
   '%{%v:lua._statusline_component("filename")%}',
   '%=',
@@ -151,6 +163,7 @@ function M.setup()
   autocmd('BufEnter', {
     group = augroup,
     callback = function()
+      cache.branch = M.update_git_branch()
       vim.wo.statusline = M.get_status('full')
     end
   })
@@ -172,6 +185,7 @@ function M.setup()
   autocmd('DiagnosticChanged', {
     group = augroup,
     callback = function()
+      cache.lsp = M.update_lsp()
       vim.wo.statusline = M.get_status('full')
     end
   })
