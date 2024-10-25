@@ -34,7 +34,14 @@ opt.wildmenu = true
 opt.undofile = true
 g.mapleader = " "
 
-opt.path:append({'.', '**'})
+-- Toggle cursorline only on active window
+vim.cmd [[
+augroup CursorLine
+    au!
+    au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+    au WinLeave * setlocal nocursorline
+augroup END
+]]
 
 vim.cmd [[
   highlight Normal guibg=none

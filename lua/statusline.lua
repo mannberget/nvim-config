@@ -164,6 +164,7 @@ function M.setup()
     group = augroup,
     callback = function()
       cache.branch = M.update_git_branch()
+      cache.lsp = M.update_lsp()
       vim.wo.statusline = M.get_status('full')
     end
   })
