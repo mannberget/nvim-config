@@ -65,7 +65,7 @@ function state.filename()
   if fname == "" then
     return ""
   end
-  return fname .. " "
+  return fname .. " %m%r "
 end
 
 function M.update_lsp()

@@ -92,6 +92,12 @@ map("v", "<Tab>", ">gv")                        -- indent selection
 map("v", "<S-Tab>", "<gv")                      -- unindent selection
 map("n", "H", "^")                              -- go to beginning of line
 map("n", "L", "$")                              -- go to end of line
+map('n', '<leader>o', 'o<Esc>')                 -- insert newline from normal mode
+
+map('n', '<C-l>',                           -- make split larger
+  '<cmd>vertical resize +5<CR>')
+map('n', '<C-h>',                           -- make split smaller
+  '<cmd>vertical resize -5<CR>')
 
 -- Telescope
 require('telescope').setup{
