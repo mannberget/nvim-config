@@ -44,6 +44,7 @@ augroup END
 ]]
 
 vim.cmd [[
+  colorscheme default
   highlight Normal guibg=none
   highlight NonText guibg=none
   highlight Normal ctermbg=none
@@ -78,6 +79,9 @@ map("n", "<leader>ff",                          -- find files
   { silent = true })
 map("n", "<leader>fb",                          -- find buffers
   ":lua require'telescope.builtin'.buffers()<CR>",
+  { silent = true })
+map("n", "<leader>fg",                          -- grep 
+  ":lua require'telescope.builtin'.live_grep()<CR>",
   { silent = true })
 map("n", "<leader>sv", "<C-w>v")                -- split window vertically
 map("n", "<leader>sh", "<C-w>s")                -- split window horizontally
@@ -182,7 +186,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
 -- Language Server Integrations:
 lspconfig = require('lspconfig')
 lspconfig.gopls.setup{}
-lspconfig.eslint.setup{}
 lspconfig.pylsp.setup{
   settings = {
     configurationSources = {"flake8"},
@@ -205,6 +208,29 @@ lspconfig.ccls.setup{
       threads = 0;
     };
   }
+}
+local root_pattern = require("lspconfig.util").root_pattern
+lspconfig.eslint.setup{
+  root_dir = root_pattern(
+    ".eslintrc.js",
+    "eslint.config.js",
+    "node_modules",
+    ".git"
+  )
+}
+
+lspconfig.volar.setup {
+  filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
+  init_options = {
+    typescript = {
+      serverPath = "node_modules/typescript/lib",
+      tsdk = "node_modules/typescript/lib",
+      useProjectReferences = false,
+    },
+    vue = {
+      hybridMode = false,
+    },
+  },
 }
 
 
@@ -258,3 +284,5 @@ cmp.setup({
     ghost_text = true,
   },
 })
+
+require('ts-comments').setup{}
