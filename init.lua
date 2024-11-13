@@ -65,7 +65,7 @@ vim.cmd("nnoremap <expr> <C-j> (winheight(0) / 5) . '<C-e>' . (winheight(0) / 5)
 vim.cmd("nnoremap <expr> <C-k> (winheight(0) / 5) . '<C-y>' . (winheight(0) / 5) . 'k'") -- small scroll down
 map('n', '<leader>o', 'o<Esc>')                 -- insert newline from normal mode
 map('n', '<leader>O', 'O<Esc>')                 -- insert newline from normal mode
-map("n", "<leader>e", "<CMD>Oil<CR>",           -- open oil
+map("n", "-", "<CMD>Oil<CR>",           -- open oil
     { desc = "Open oil" })
 map('v', '<leader>y', '"+y')                    -- yank into system clipboard
 map('n', '<leader>y', '"+y')                    -- yank into system clipboard
