@@ -44,7 +44,8 @@ augroup END
 ]]
 
 vim.cmd [[
-  highlight Normal guibg=none
+  colorscheme lunaperche
+  highlight Normal guibg=none guifg=white
   highlight NonText guibg=none
   highlight Normal ctermbg=none
   highlight NonText ctermbg=none
@@ -247,7 +248,8 @@ cmp.setup({
       { name = 'path' },
       { name = 'buffer' },
   }),
-  completion = {keyword_length = 2},
+  preselect = cmp.PreselectMode.None,
+  completion = {keyword_length = 2, completeopt = "menu,menuone,noselect"},
   formatting = {
       format = function(entry, vim_item)
           vim_item.menu = source_mapping[entry.source.name]
