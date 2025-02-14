@@ -148,6 +148,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
     vim.keymap.set('n', 'gE', vim.diagnostic.goto_prev, { noremap=true, silent=true })
     vim.keymap.set('n', 'ge', vim.diagnostic.goto_next, { noremap=true, silent=true })
+    vim.keymap.set('n', '<leader>ge', function() vim.diagnostic.goto_next({
+      severity = vim.diagnostic.severity.ERROR }) end, { noremap=true,
+      silent=true })
 
     if client.server_capabilities.completionProvider then
       vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
