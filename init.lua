@@ -146,6 +146,13 @@ vim.api.nvim_create_autocmd('LspAttach', {
     local client = vim.lsp.get_client_by_id(args.data.client_id)
     local bufopts = { noremap=true, silent=true, buffer=bufnr }
 
+    if client == nil then
+      return
+    end
+    if client.name == 'ruff' then
+      client.server_capabilities.hoverProvider = false
+    end
+
     vim.keymap.set('n', 'gE', vim.diagnostic.goto_prev, { noremap=true, silent=true })
     vim.keymap.set('n', 'ge', vim.diagnostic.goto_next, { noremap=true, silent=true })
     vim.keymap.set('n', '<leader>ge', function() vim.diagnostic.goto_next({
@@ -189,21 +196,39 @@ vim.api.nvim_create_autocmd('LspAttach', {
 -- Language Server Integrations:
 lspconfig = require('lspconfig')
 lspconfig.gopls.setup{}
-lspconfig.pylsp.setup{
+
+lspconfig.ruff.setup{}
+lspconfig.pyright.setup {
   settings = {
-    configurationSources = {"flake8"},
-    pylsp = {
-      plugins = {
-        black = { enabled = false },
-        pycodestyle = { enabled = false },
-        pyflakes = { enabled = false },
-        mccabe = { enabled = false },
-        flake8 = { enabled = true },
-        autopep8 = { enabled = true },
-      }
-    }
-  }
+    pyright = {
+      -- Using Ruff's import organizer
+      disableOrganizeImports = true,
+    },
+    python = {
+      analysis = {
+        -- Ignore all files for analysis to exclusively use Ruff for linting
+        ignore = { '*' },
+      },
+    },
+  },
 }
+
+-- lspconfig.pylsp.setup{
+--   settings = {
+--     configurationSources = {"flake8"},
+--     pylsp = {
+--       plugins = {
+--         black = { enabled = false },
+--         pycodestyle = { enabled = false },
+--         pyflakes = { enabled = false },
+--         mccabe = { enabled = false },
+--         flake8 = { enabled = false },
+--         autopep8 = { enabled = false },
+--       }
+--     }
+--   }
+-- }
+
 lspconfig.ccls.setup{
   init_options = {
     compilationDatabaseDirectory = "build";
@@ -212,29 +237,29 @@ lspconfig.ccls.setup{
     };
   }
 }
-local root_pattern = require("lspconfig.util").root_pattern
-lspconfig.eslint.setup{
-  root_dir = root_pattern(
-    ".eslintrc.js",
-    "eslint.config.js",
-    "node_modules",
-    ".git"
-  )
-}
+-- local root_pattern = require("lspconfig.util").root_pattern
+-- lspconfig.eslint.setup{
+--   root_dir = root_pattern(
+--     ".eslintrc.js",
+--     "eslint.config.js",
+--     "node_modules",
+--     ".git"
+--   )
+-- }
 
-lspconfig.volar.setup {
-  filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
-  init_options = {
-    typescript = {
-      serverPath = "node_modules/typescript/lib",
-      tsdk = "node_modules/typescript/lib",
-      useProjectReferences = false,
-    },
-    vue = {
-      hybridMode = false,
-    },
-  },
-}
+-- lspconfig.volar.setup {
+--   filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
+--   init_options = {
+--     typescript = {
+--       serverPath = "node_modules/typescript/lib",
+--       tsdk = "node_modules/typescript/lib",
+--       useProjectReferences = false,
+--     },
+--     vue = {
+--       hybridMode = false,
+--     },
+--   },
+-- }
 
 
 vim.opt.completeopt = {"menu", "menuone", "noselect"}
