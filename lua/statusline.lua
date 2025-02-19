@@ -39,7 +39,13 @@ function state.mode()
 end
 
 function M.update_git_branch()
-  return vim.fn.system("git rev-parse --abbrev-ref HEAD 2>/dev/null")
+
+  local os_name = os.getenv("OS")
+  if os_name and os_name:match("Windows") then
+    return vim.fn.system("git rev-parse --abbrev-ref HEAD 2> NUL")
+  else
+    return vim.fn.system("git rev-parse --abbrev-ref HEAD 2>/dev/null")
+  end
 end
 
 
