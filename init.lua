@@ -44,7 +44,7 @@ augroup END
 ]]
 
 vim.cmd [[
-  colorscheme lunaperche
+  colorscheme default
   highlight Normal guibg=none guifg=white
   highlight NonText guibg=none
   highlight Normal ctermbg=none
@@ -212,6 +212,15 @@ lspconfig.pyright.setup {
     },
   },
 }
+
+local null_ls = require("null-ls")
+
+null_ls.setup({
+    sources = {
+        null_ls.builtins.formatting.djlint,
+        null_ls.builtins.diagnostics.djlint,
+    },
+})
 
 -- lspconfig.pylsp.setup{
 --   settings = {

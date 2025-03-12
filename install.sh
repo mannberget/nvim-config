@@ -15,6 +15,7 @@ repos_and_tags=(
     "nvim-telescope/telescope.nvim" "0.1.8"
     "stevearc/oil.nvim" "default"
     "folke/ts-comments.nvim" "default"
+    "nvimtools/none-ls.nvim" "default"
 )
 
 # Define the target directory for cloning
