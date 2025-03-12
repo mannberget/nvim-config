@@ -16,6 +16,7 @@ repos_and_tags=(
     "stevearc/oil.nvim" "default"
     "folke/ts-comments.nvim" "default"
     "nvimtools/none-ls.nvim" "default"
+    "github/copilot.vim" "default"
 )
 
 # Define the target directory for cloning

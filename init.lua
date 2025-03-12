@@ -106,6 +106,17 @@ map('n', '<C-h>',                           -- make split smaller
 -- Telescope
 require('telescope').setup{
   defaults = {
+    file_ignore_patterns = {
+            "node_modules/.*",
+            "local_packages/.*",
+            "%.env",
+            "yarn.lock",
+            "package-lock.json",
+            "lazy-lock.json",
+            "init.sql",
+            "target/.*",
+            ".git/.*",
+        },
     mappings = {
       i = {
         ["<esc>"] = require('telescope.actions').close,
@@ -122,8 +133,8 @@ require('telescope').setup{
 -- TreeSitter
 require('nvim-treesitter.configs').setup {
   ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "go", "javascript" },
-  sync_install = false,
-  auto_install = false,
+  sync_install = true,
+  auto_install = true,
   highlight = {
     enable = true,
     disable = function(lang, buf)
@@ -137,7 +148,15 @@ require('nvim-treesitter.configs').setup {
   },
 }
 
-require('oil').setup()
+require('oil').setup({
+  view_options = {
+    show_hidden = true,
+    is_always_hidden = function(name, bufnr)
+      local m = name:match(".*_templ.*$")
+      return m ~= nil
+    end
+  }
+})
 
 -- LSP
 vim.api.nvim_create_autocmd('LspAttach', {
