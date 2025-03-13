@@ -44,11 +44,13 @@ augroup END
 ]]
 
 vim.cmd [[
-  colorscheme default
-  highlight Normal guibg=none guifg=white
-  highlight NonText guibg=none
-  highlight Normal ctermbg=none
-  highlight NonText ctermbg=none
+  colorscheme nordic
+  " highlight Normal guifg=white
+  " highlight Normal guibg=none guifg=white
+  " highlight Normal guibg=none guifg=white
+  " highlight NonText guibg=none
+  " highlight Normal ctermbg=none
+  " highlight NonText ctermbg=none
   highlight link markdownError NONE
 ]]
 
