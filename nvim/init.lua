@@ -51,6 +51,7 @@ vim.cmd [[
   " highlight NonText guibg=none
   " highlight Normal ctermbg=none
   " highlight NonText ctermbg=none
+  highlight FloatBorder guifg=white guibg=none
   highlight link markdownError NONE
 ]]
 
