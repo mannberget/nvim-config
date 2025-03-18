@@ -45,12 +45,12 @@ augroup END
 
 vim.cmd [[
   colorscheme nordic
-  " highlight Normal guifg=white
-  " highlight Normal guibg=none guifg=white
-  " highlight Normal guibg=none guifg=white
-  " highlight NonText guibg=none
-  " highlight Normal ctermbg=none
-  " highlight NonText ctermbg=none
+
+  highlight TelescopeResultsBorder guifg=white
+  highlight TelescopePreviewBorder guifg=white
+  highlight TelescopePromptBorder guifg=white
+  highlight WinSeparator guifg=white
+
   highlight FloatBorder guifg=white guibg=none
   highlight link markdownError NONE
 ]]
