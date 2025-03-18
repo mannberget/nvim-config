@@ -49,9 +49,9 @@ vim.cmd [[
   highlight TelescopeResultsBorder guifg=white
   highlight TelescopePreviewBorder guifg=white
   highlight TelescopePromptBorder guifg=white
-  highlight WinSeparator guifg=white
 
-  highlight FloatBorder guifg=white guibg=none
+  highlight FloatBorder guifg=white
+
   highlight link markdownError NONE
 ]]
 
