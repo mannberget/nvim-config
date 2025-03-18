@@ -18,6 +18,7 @@ repos_and_tags=(
     "nvimtools/none-ls.nvim" "default"
     "github/copilot.vim" "default"
     "AlexvZyl/nordic.nvim" "default"
+    "lukas-reineke/indent-blankline.nvim" "default"
 )
 
 # Define the target directory for cloning
