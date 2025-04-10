@@ -7,10 +7,6 @@ base_url="https://github.com/"
 repos_and_tags=(
     "nvim-treesitter/nvim-treesitter" "default"
     "neovim/nvim-lspconfig" "default"
-    "hrsh7th/nvim-cmp" "default"
-    "hrsh7th/cmp-nvim-lsp" "default"
-    "hrsh7th/cmp-path" "default"
-    "hrsh7th/cmp-nvim-lsp-signature-help" "default"
     "nvim-lua/plenary.nvim" "default"
     "nvim-telescope/telescope.nvim" "0.1.8"
     "stevearc/oil.nvim" "default"
@@ -19,6 +15,7 @@ repos_and_tags=(
     "github/copilot.vim" "default"
     "AlexvZyl/nordic.nvim" "default"
     "lukas-reineke/indent-blankline.nvim" "default"
+    "saghen/blink.cmp" "default"
 )
 
 # Define the target directory for cloning

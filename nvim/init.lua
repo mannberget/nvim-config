@@ -30,7 +30,7 @@ opt.termguicolors = true            -- true color support
 opt.wrap = false
 opt.encoding = "utf-8"
 opt.cmdheight = 1
-opt.wildmenu = true
+-- opt.wildmenu = true
 opt.undofile = true
 g.mapleader = " "
 
@@ -180,8 +180,13 @@ vim.api.nvim_create_autocmd('LspAttach', {
     if client == nil then
       return
     end
+
     if client.name == 'ruff' then
       client.server_capabilities.hoverProvider = false
+    end
+
+    if client.name == 'pyright' then
+      client.server_capabilities.publishDiagnostics = false
     end
 
     vim.keymap.set('n', 'gE', vim.diagnostic.goto_prev, { noremap=true, silent=true })
@@ -224,21 +229,32 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
+
 -- Language Server Integrations:
 lspconfig = require('lspconfig')
+
+
 lspconfig.gopls.setup{}
 
 lspconfig.ruff.setup{}
+
 lspconfig.pyright.setup {
   settings = {
     pyright = {
       -- Using Ruff's import organizer
       disableOrganizeImports = true,
+      useLibraryCodeForTypes = false,
     },
     python = {
       analysis = {
         -- Ignore all files for analysis to exclusively use Ruff for linting
         ignore = { '*' },
+
+        -- Disable as much as possible
+        diagnosticMode = "openFilesOnly",
+        typeCheckingMode = "off",
+        autoSearchPaths = false,
+        useLibraryCodeForTypes = false,
       },
     },
   },
@@ -253,21 +269,6 @@ null_ls.setup({
     },
 })
 
--- lspconfig.pylsp.setup{
---   settings = {
---     configurationSources = {"flake8"},
---     pylsp = {
---       plugins = {
---         black = { enabled = false },
---         pycodestyle = { enabled = false },
---         pyflakes = { enabled = false },
---         mccabe = { enabled = false },
---         flake8 = { enabled = false },
---         autopep8 = { enabled = false },
---       }
---     }
---   }
--- }
 
 lspconfig.ccls.setup{
   init_options = {
@@ -277,81 +278,5 @@ lspconfig.ccls.setup{
     };
   }
 }
--- local root_pattern = require("lspconfig.util").root_pattern
--- lspconfig.eslint.setup{
---   root_dir = root_pattern(
---     ".eslintrc.js",
---     "eslint.config.js",
---     "node_modules",
---     ".git"
---   )
--- }
-
--- lspconfig.volar.setup {
---   filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
---   init_options = {
---     typescript = {
---       serverPath = "node_modules/typescript/lib",
---       tsdk = "node_modules/typescript/lib",
---       useProjectReferences = false,
---     },
---     vue = {
---       hybridMode = false,
---     },
---   },
--- }
-
-
-vim.opt.completeopt = {"menu", "menuone", "noselect"}
-local cmp = require('cmp')
-local cmp_types = require('cmp.types')
-local source_mapping = {buffer = '[Buffer]', nvim_lsp = '[LSP]'}
-cmp.setup({
-  mapping = cmp.mapping.preset.insert({
-      ['<C-n>'] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-          cmp.select_next_item()
-        else
-          fallback()
-        end
-      end, { 'i', 's' }),
-      ['<C-p>'] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-          cmp.select_prev_item()
-        else
-          fallback()
-        end
-      end, { 'i', 's' }),
-      ['<C-f>'] = cmp.mapping.scroll_docs( 4),
-      ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-      ['<C-Space>'] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-          cmp.abort()
-        else
-          cmp.complete()
-        end
-      end, { 'i', 's' }),
-      ['<CR>'] = cmp.mapping.confirm({ select = false }),
-  }),
-  sources = cmp.config.sources({
-      { name = 'nvim_lsp' },
-      { name = 'nvim_lsp_signature_help' },
-  },
-  {
-      { name = 'path' },
-      { name = 'buffer' },
-  }),
-  preselect = cmp.PreselectMode.None,
-  completion = {keyword_length = 2, completeopt = "menu,menuone,noselect"},
-  formatting = {
-      format = function(entry, vim_item)
-          vim_item.menu = source_mapping[entry.source.name]
-          return vim_item
-      end,
-  },
-  experimental = {
-    ghost_text = true,
-  },
-})
 
 require('ts-comments').setup{}
