@@ -7,6 +7,5 @@
 
 # ==========================
 
-theme = nord-wave
+theme = catppuccin-mocha
 gtk-titlebar-hide-when-maximized = true
-
