@@ -15,7 +15,7 @@ repos_and_tags=(
     "github/copilot.vim" "default"
     "AlexvZyl/nordic.nvim" "default"
     "lukas-reineke/indent-blankline.nvim" "default"
-    "saghen/blink.cmp" "default"
+    "saghen/blink.cmp" "v1.1.1"
 )
 
 # Define the target directory for cloning
