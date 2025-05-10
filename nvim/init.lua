@@ -43,15 +43,22 @@ augroup CursorLine
 augroup END
 ]]
 
+-- remove all background (and non focused windows!)
 vim.cmd [[
   colorscheme nordic
+  highlight Normal guibg=NONE ctermbg=NONE
+  highlight NormalNC guibg=NONE ctermbg=NONE
+  highlight NonText guibg=NONE ctermbg=NONE
+  highlight EndOfBuffer guibg=NONE ctermbg=NONE
+  highlight LineNr guibg=NONE ctermbg=NONE
+  highlight SignColumn guibg=NONE ctermbg=NONE
+
+  highlight WinSeparator guibg=NONE guifg=gray
 
   highlight TelescopeResultsBorder guifg=white
   highlight TelescopePreviewBorder guifg=white
   highlight TelescopePromptBorder guifg=white
-
   highlight FloatBorder guifg=white
-
   highlight link markdownError NONE
 ]]
 
